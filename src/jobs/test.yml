@@ -47,11 +47,13 @@ parameters:
     type: boolean
     default: false
   pre_mvn_steps:
-    description: Steps to run just before maven, after the code has been checked out and the cache has been restored.
+    description: (Optional) Steps to run just before maven, after the code has been checked out and the cache has been restored.
     type: steps
+    default: []
   post_mvn_steps:
-    description: Steps to run immediately after maven has completed, before test results are processed.
+    description: (Optional) Steps to run immediately after maven has completed, before test results are processed.
     type: steps
+    default: []
 
 steps:
   - unless:
