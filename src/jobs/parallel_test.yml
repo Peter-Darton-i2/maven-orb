@@ -75,8 +75,8 @@ parameters:
     type: steps
 
 steps:
-  - when:
-      condition: << not parameters.skip_checkout >>
+  - unless:
+      condition: << parameters.skip_checkout >>
       steps:
         - checkout
   - run:
