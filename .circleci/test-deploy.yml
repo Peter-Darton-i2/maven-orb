@@ -1,8 +1,9 @@
 version: 2.1
 
 orbs:
-  maven: circleci/maven@dev:<<pipeline.git.revision>>
-  orb-tools: circleci/orb-tools@11.1
+  # The orb we're building will be injected using the 'orb-under-test' name.
+  # (because config.yml's continue stage said "orb-name: orb-under-test")
+  orb-tools: circleci/orb-tools@12
 
 filters: &filters
   tags:
@@ -11,22 +12,88 @@ filters: &filters
 workflows:
   test-deploy:
     jobs:
-      - orb-tools/pack:
+      - orb-under-test/test:
           filters: *filters
-      - maven/test: 
+          name: Test test job with simple use case
           app_src_directory: sample_app2
           command: test -DforkCount=4
+      - orb-under-test/test:
           filters: *filters
+          name: Test test job with multi-step use case
+          app_src_directory: sample_app2
+          command: |
+            help:evaluate -Dexpression=project.version -q -DforceStdout
+            -Dmaven.test.skip=true verify
+          mvn_step_name: Show project.version and then compile without tests
+          skip_checkout: true
+          pre-steps:
+            - checkout
+            - run:
+                name: Prevent git checkout from working again in this job
+                command: rm -rf .git # any future checkout will fail
+          pre_mvn_steps:
+            - run:
+                name: Show project.version again
+                command: mvn help:evaluate -Dexpression=project.version -q -DforceStdout
+          post_mvn_steps:
+            - run:
+                name: Show project.version one more time
+                command: mvn help:evaluate -Dexpression=project.version -q -DforceStdout
+      - orb-under-test/parallel_test:
+          filters: *filters
+          name: Test parallel_test job with simple use case
+          app_src_directory: sample_app2
+          command: test -DforkCount=4
+      - orb-under-test/parallel_test:
+          filters: *filters
+          name: Test parallel_test job with multi-step use case
+          app_src_directory: sample_app2
+          command: |
+            help:evaluate -Dexpression=project.version -q -DforceStdout
+            -Dmaven.test.skip=true verify
+          mvn_step_name: Show project.version and then compile without tests
+          skip_checkout: true
+          pre-steps:
+            - checkout
+            - run:
+                name: Prevent git checkout from working again in this job
+                command: rm -rf .git # any future checkout will fail
+          pre_mvn_steps:
+            - run:
+                name: Show project.version again
+                command: mvn help:evaluate -Dexpression=project.version -q -DforceStdout
+          post_mvn_steps:
+            - run:
+                name: Show project.version one more time
+                command: mvn help:evaluate -Dexpression=project.version -q -DforceStdout
+      - orb-tools/pack:
+          filters: *filters
+          requires:
+            - Test test job with simple use case
+            - Test test job with multi-step use case
+            - Test parallel_test job with simple use case
+            - Test parallel_test job with multi-step use case
       - orb-tools/publish:
-          orb-name: circleci/maven
-          vcs-type: << pipeline.project.type >>
-          pub-type: production
+          name: Official orb release
+          orb_name: circleci/maven
+          vcs_type: << pipeline.project.type >>
+          pub_type: production
           requires:
             - orb-tools/pack
-            - maven/test
           context: orb-publisher
           filters:
             branches:
               ignore: /.*/
             tags:
               only: /^v[0-9]+\.[0-9]+\.[0-9]+$/
+      - orb-tools/publish:
+          name: Upload dev orb
+          orb_name: circleci/maven
+          vcs_type: << pipeline.project.type >>
+          pub_type: dev
+          requires:
+            - orb-tools/pack
+          context: orb-publisher
+          filters:
+            branches:
+              ignore: /^pull/[0-9]+$/ # Forked pull-requests have a branch of "pull/123"; don't run on those.
