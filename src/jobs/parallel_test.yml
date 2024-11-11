@@ -84,6 +84,7 @@ steps:
   - run:
       name: Enable Test Splitting
       environment:
+        PARAM_APP_SRC_DIR: << parameters.app_src_directory >>
         PARAM_TEST_DIR: << parameters.test_directory >>
         PARAM_TEST_PATTERN: << parameters.parallel_test_pattern >>
         PARAM_IT_PATTERN: << parameters.parallel_it_pattern >>

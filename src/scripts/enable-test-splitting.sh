@@ -7,6 +7,11 @@ echo -e "\033[31m\033[4mOrb Notes on Test Splitting\033[0m
         Therefore this orb will generate an exclusion list; a list of tests being run on the other nodes, and pass that to surefire/failsafe as an exclusion.
         \033[34mDebugging:\033[0m This orb will place all files used to decide tests in .circleci/tests and export it as an artifact for inspection/debugging.
         "
+set -x
+if [ -n "$PARAM_APP_SRC_DIR" ]; then
+    cd "$PARAM_APP_SRC_DIR" || exit
+fi
+set -u
 mkdir -p .circleci/tests/
 # generate excluded surefire tests using provided pattern
 circleci tests glob "$PARAM_TEST_DIR"/"$PARAM_TEST_PATTERN" | \
