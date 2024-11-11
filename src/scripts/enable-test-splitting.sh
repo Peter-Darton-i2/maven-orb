@@ -13,15 +13,25 @@ if [ -n "$PARAM_APP_SRC_DIR" ]; then
 fi
 set -u
 mkdir -p .circleci/tests/
+
 # generate excluded surefire tests using provided pattern
 circleci tests glob "$PARAM_TEST_DIR"/"$PARAM_TEST_PATTERN" | \
     sed "s#.*src/test/java/\(.*\)\..*#\1#g" | \
     tr "/" "." > .circleci/tests/surefire_classnames
 circleci tests split --split-by=timings --timings-type=classname < .circleci/tests/surefire_classnames > /tmp/this_node_tests 
-grep -xvf /tmp/this_node_tests < .circleci/tests/surefire_classnames > .circleci/tests/surefire_classnames_ignore_list 
+grep -xvf /tmp/this_node_tests < .circleci/tests/surefire_classnames > .circleci/tests/surefire_classnames_ignore_list || true
+
 # generate excluded failsafe tests using provided pattern
 circleci tests glob "$PARAM_TEST_DIR"/"$PARAM_IT_PATTERN" | \
     sed "s#.*src/test/java/\(.*\)\..*#\1#g" | \
     tr "/" "." > .circleci/tests/failsafe_classnames
 circleci tests split --split-by=timings --timings-type=classname < .circleci/tests/failsafe_classnames > /tmp/this_node_it_tests
-grep -xvf /tmp/this_node_it_tests < .circleci/tests/failsafe_classnames > .circleci/tests/failsafe_classnames_ignore_list
+grep -xvf /tmp/this_node_it_tests < .circleci/tests/failsafe_classnames > .circleci/tests/failsafe_classnames_ignore_list || true
+
+# Note the || true on the grep command. This is because grep returns a non-zero exit code if no lines are matched.
+# whereas we are OK with empty files in this case.
+
+echo "# Excluded Surefire tests:"
+cat .circleci/tests/surefire_classnames_ignore_list
+echo "# Excluded Failsafe tests:"
+cat .circleci/tests/failsafe_classnames_ignore_list
