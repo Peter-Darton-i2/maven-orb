@@ -8,7 +8,6 @@ echo -e "\033[31m\033[4mOrb Notes on Test Splitting\033[0m
         Therefore this orb will generate an exclusion list; a list of tests being run on the other nodes, and pass that to surefire/failsafe as an exclusion.
         \033[34mDebugging:\033[0m This orb will place all files used to decide tests in .circleci/tests. Export it as an artifact for inspection/debugging.
         "
-mkdir -p .circleci/tests/
 if [ -n "${PARAM_APP_SRC_DIR}" ]; then
     ( # show the user where we are cd'ing to
         set -x
@@ -18,6 +17,10 @@ if [ -n "${PARAM_APP_SRC_DIR}" ]; then
     cd "${PARAM_APP_SRC_DIR}" || exit
 fi
 set -u # delay setting this until after cd as some CircleCI cd hooks fail with it set
+(
+    set -x
+    mkdir -p .circleci/tests/
+)
 
 # generate excluded surefire tests using provided pattern
 (
