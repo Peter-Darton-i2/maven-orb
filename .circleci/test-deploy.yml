@@ -39,10 +39,8 @@ workflows:
                   mvn help:evaluate -Dexpression=project.version -q -DforceStdout
           post_mvn_steps:
             - run:
-                name: post_mvn_step to show project.version
-                command: |
-                  cd sample_app2
-                  mvn help:evaluate -Dexpression=project.version -q -DforceStdout
+                name: list files in the workspace
+                command: find . -ls
       - orb-under-test/parallel_test:
           filters: *filters
           name: Test parallel_test job with simple use case
@@ -70,10 +68,8 @@ workflows:
                   mvn help:evaluate -Dexpression=project.version -q -DforceStdout
           post_mvn_steps:
             - run:
-                name: post_mvn_step to show project.version
-                command: |
-                  cd sample_app2
-                  mvn help:evaluate -Dexpression=project.version -q -DforceStdout
+                name: list files in the workspace
+                command: find . -ls
       - orb-tools/pack:
           filters: *filters
           requires:
