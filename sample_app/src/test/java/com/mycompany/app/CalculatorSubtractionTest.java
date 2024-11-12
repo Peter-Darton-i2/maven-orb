@@ -14,7 +14,7 @@ public class CalculatorSubtractionTest
     public void twoMinusThree()
     {
         float correctAnswer = -1;
-        assertEquals(correctAnswer, Calculator.Addition(2,3), 0.000001);
+        assertEquals(correctAnswer, Calculator.Subtraction(2,3), 0.000001);
     }
 
     @Test
