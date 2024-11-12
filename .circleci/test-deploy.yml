@@ -42,6 +42,23 @@ workflows:
             - run:
                 name: list files in the workspace
                 command: find . -ls
+      - orb-under-test/test:
+          filters: *filters
+          name: Test test job with pom in base directory
+          skip_checkout: true
+          pre-steps:
+            - checkout
+            - run:
+                name: Give us just the sample_app in the workspace
+                command: |
+                  set -ex
+                  cd sample_app
+                  tar -cf /tmp/sample_app.tar .
+                  cd ..
+                  rm -rf .[a-z]* *
+                  tar -xf /tmp/sample_app.tar
+                  rm /tmp/sample_app.tar
+                  find . -ls
       - orb-under-test/parallel_test:
           filters: *filters
           name: Test parallel_test job with simple use case
@@ -72,13 +89,32 @@ workflows:
             - run:
                 name: list files in the workspace
                 command: find . -ls
+      - orb-under-test/parallel_test:
+          filters: *filters
+          name: Test parallel_test job with pom in base directory
+          skip_checkout: true
+          pre-steps:
+            - checkout
+            - run:
+                name: Give us just the sample_app in the workspace
+                command: |
+                  set -ex
+                  cd sample_app
+                  tar -cf /tmp/sample_app.tar .
+                  cd ..
+                  rm -rf .[a-z]* *
+                  tar -xf /tmp/sample_app.tar
+                  rm /tmp/sample_app.tar
+                  find . -ls
       - orb-tools/pack:
           filters: *filters
           requires:
             - Test test job with simple use case
             - Test test job with multi-step use case
+            - Test test job with pom in base directory
             - Test parallel_test job with simple use case
             - Test parallel_test job with multi-step use case
+            - Test parallel_test job with pom in base directory
       - orb-tools/publish:
           name: Official orb release
           orb_name: circleci/maven
