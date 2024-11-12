@@ -33,12 +33,16 @@ workflows:
                 command: rm -rf .git # any future checkout will fail
           pre_mvn_steps:
             - run:
-                name: Show project.version again
-                command: mvn help:evaluate -Dexpression=project.version -q -DforceStdout
+                name: pre_mvn_step to show project.version
+                command: |
+                  cd sample_app2
+                  mvn help:evaluate -Dexpression=project.version -q -DforceStdout
           post_mvn_steps:
             - run:
-                name: Show project.version one more time
-                command: mvn help:evaluate -Dexpression=project.version -q -DforceStdout
+                name: post_mvn_step to show project.version
+                command: |
+                  cd sample_app2
+                  mvn help:evaluate -Dexpression=project.version -q -DforceStdout
       - orb-under-test/parallel_test:
           filters: *filters
           name: Test parallel_test job with simple use case
@@ -60,12 +64,16 @@ workflows:
                 command: rm -rf .git # any future checkout will fail
           pre_mvn_steps:
             - run:
-                name: Show project.version again
-                command: mvn help:evaluate -Dexpression=project.version -q -DforceStdout
+                name: pre_mvn_step to show project.version
+                command: |
+                  cd sample_app2
+                  mvn help:evaluate -Dexpression=project.version -q -DforceStdout
           post_mvn_steps:
             - run:
-                name: Show project.version one more time
-                command: mvn help:evaluate -Dexpression=project.version -q -DforceStdout
+                name: post_mvn_step to show project.version
+                command: |
+                  cd sample_app2
+                  mvn help:evaluate -Dexpression=project.version -q -DforceStdout
       - orb-tools/pack:
           filters: *filters
           requires:
