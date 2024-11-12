@@ -15,12 +15,12 @@ workflows:
       - orb-under-test/test:
           filters: *filters
           name: Test test job with simple use case
-          app_src_directory: sample_app2
+          app_src_directory: sample_app
           command: test -DforkCount=4
       - orb-under-test/test:
           filters: *filters
           name: Test test job with multi-step use case
-          app_src_directory: sample_app2
+          app_src_directory: sample_app
           command: |
             help:evaluate -Dexpression=project.version -q -DforceStdout
             -Dmaven.test.skip=true verify
@@ -35,7 +35,7 @@ workflows:
             - run:
                 name: pre_mvn_step to show project.version
                 command: |
-                  cd sample_app2
+                  cd sample_app
                   mvn help:evaluate -Dexpression=project.version -q -DforceStdout
           post_mvn_steps:
             - run:
@@ -44,12 +44,12 @@ workflows:
       - orb-under-test/parallel_test:
           filters: *filters
           name: Test parallel_test job with simple use case
-          app_src_directory: sample_app2
+          app_src_directory: sample_app
           command: test -DforkCount=4
       - orb-under-test/parallel_test:
           filters: *filters
           name: Test parallel_test job with multi-step use case
-          app_src_directory: sample_app2
+          app_src_directory: sample_app
           command: |
             help:evaluate -Dexpression=project.version -q -DforceStdout
             -Dmaven.test.skip=true verify
@@ -64,7 +64,7 @@ workflows:
             - run:
                 name: pre_mvn_step to show project.version
                 command: |
-                  cd sample_app2
+                  cd sample_app
                   mvn help:evaluate -Dexpression=project.version -q -DforceStdout
           post_mvn_steps:
             - run:

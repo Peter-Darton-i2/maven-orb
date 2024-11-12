@@ -1,4 +1,4 @@
-package com.ryanbourdais;
+package com.mycompany.app;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -6,7 +6,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 /**
- * Unit test
+ * Unit test for calculator multiplication and division
  */
 public class CalculatorMultiplicationTest 
 {
