@@ -89,7 +89,7 @@ workflows:
           name: Test parallel_test job with multi-step use case
           executor:
             name: orb-under-test/default
-            tag: 17.0
+            tag: '17.0'
             resource_class: small
           app_src_directory: sample_app
           mvn_step_name: Show project.version, install, then test
