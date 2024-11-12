@@ -59,6 +59,26 @@ workflows:
                   tar -xf /tmp/sample_app.tar
                   rm /tmp/sample_app.tar
                   find . -ls
+      - orb-under-test/test:
+          filters: *filters
+          name: Test test job with test_results_path having an absolute path
+          app_src_directory: sample_app
+          command: test
+          test_results_path: /tmp/custom-path-to-surefire-reports
+          post_mvn_steps:
+            - run:
+                name: Move test results to custom path
+                command: mv sample_app/target/surefire-reports /tmp/custom-path-to-surefire-reports
+      - orb-under-test/test:
+          filters: *filters
+          name: Test test job with test_results_path having a relative path
+          app_src_directory: sample_app
+          command: test
+          test_results_path: custom-path-to-surefire-reports
+          post_mvn_steps:
+            - run:
+                name: Move test results to custom path
+                command: mv sample_app/target/surefire-reports sample_app/custom-path-to-surefire-reports
       - orb-under-test/parallel_test:
           filters: *filters
           name: Test parallel_test job with simple use case
@@ -67,6 +87,10 @@ workflows:
       - orb-under-test/parallel_test:
           filters: *filters
           name: Test parallel_test job with multi-step use case
+          executor:
+            name: orb-under-test/default
+            tag: 17.0
+            resource_class: small
           app_src_directory: sample_app
           mvn_step_name: Show project.version, install, then test
           command: |
@@ -112,6 +136,8 @@ workflows:
             - Test test job with simple use case
             - Test test job with multi-step use case
             - Test test job with pom in base directory
+            - Test test job with test_results_path having an absolute path
+            - Test test job with test_results_path having a relative path
             - Test parallel_test job with simple use case
             - Test parallel_test job with multi-step use case
             - Test parallel_test job with pom in base directory
