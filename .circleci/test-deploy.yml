@@ -21,10 +21,11 @@ workflows:
           filters: *filters
           name: Test test job with multi-step use case
           app_src_directory: sample_app
+          mvn_step_name: Show project.version, install, then test
           command: |
             help:evaluate -Dexpression=project.version -q -DforceStdout
-            -Dmaven.test.skip=true verify
-          mvn_step_name: Show project.version and then compile without tests
+            -Dmaven.test.skip=true install
+            verify
           skip_checkout: true
           pre-steps:
             - checkout
@@ -50,10 +51,11 @@ workflows:
           filters: *filters
           name: Test parallel_test job with multi-step use case
           app_src_directory: sample_app
+          mvn_step_name: Show project.version, install, then test
           command: |
             help:evaluate -Dexpression=project.version -q -DforceStdout
-            -Dmaven.test.skip=true verify
-          mvn_step_name: Show project.version and then compile without tests
+            -Dmaven.test.skip=true install
+            verify
           skip_checkout: true
           pre-steps:
             - checkout
